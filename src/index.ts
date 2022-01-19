@@ -14,7 +14,11 @@ const commands = [
     .setName('submit')
     .setDescription('Submit a joke')
     .addUserOption(o => o.setName('author').setDescription('The author of the joke').setRequired(true))
-    .addStringOption(o => o.setName('joke').setDescription('The joke to submit').setRequired(true))
+    .addStringOption(o => o.setName('joke').setDescription('The joke to submit').setRequired(true)),
+  new SlashCommandBuilder()
+    .setName('channel')
+    .setDescription('Set the channel for polls')
+    .addChannelOption(o => o.setName('channel').setDescription('The channel').setRequired(true))
 ];
 const token = process.env['NODE_ENV'] === 'development' ?
   process.env['DISCORD_DEV_TOKEN']! :
@@ -40,6 +44,10 @@ client.on('interactionCreate', interaction => {
       case 'submit':
         submit(interaction);
         break;
+
+      case 'channel':
+        channel(interaction);
+        break;
     }
   }
 });
@@ -62,6 +70,24 @@ function submit(interaction: CommandInteraction) {
 
   interaction.reply(`Joke submitted:\n\n${author}: "**${joke}**"`)
     .catch(console.error);
+}
+
+function channel(interaction: CommandInteraction) {
+  const channel = interaction.options.getChannel('channel')!;
+
+  if (channel.type === 'GUILD_TEXT') {
+    if (!guilds.has(interaction.guildId!)) {
+      guilds.set(interaction.guildId!, { id: interaction.guildId!, channel: channel.id, jokes: [] });
+    } else {
+      guilds.get(interaction.guildId!)!.channel = channel.id;
+    }
+
+    interaction.reply(`Polls will now be posted in ${channel}`)
+      .catch(console.error);
+  } else {
+    interaction.reply({ content: `**${channel}** is not a text channel`, ephemeral: true })
+      .catch(console.error);
+  }
 }
 
 function createPoll() {
