@@ -9,6 +9,8 @@ import Guild from './guild.interface';
 dotenv.config();
 
 const cronString = '0 15 * * 5';
+const embedColor = '#b00b69';
+const embedThumbnail = 'https://cdn.discordapp.com/avatars/933319312402436206/b34986c77251abe67cf4a6909f17acc6.webp';
 const commands = [
   new SlashCommandBuilder()
     .setName('submit')
@@ -54,20 +56,30 @@ client.login(token)
   .catch(console.error);
 
 function submit(interaction: CommandInteraction) {
-  if (!jokes.has(interaction.guildId!)) {
-    jokes.set(interaction.guildId!, []);
+  if (guilds.has(interaction.guildId!)) {
+    const author = interaction.options.getUser('author')!;
+    const joke = interaction.options.getString('joke')!;
+
+    guilds.get(interaction.guildId!)!.jokes.push({
+      author: author.id,
+      joke: joke
+    });
+
+    const embed = new MessageEmbed()
+      .setTitle('🥳 Joke submitted')
+      .addField(author.username, joke)
+      .setColor(embedColor)
+      .setTimestamp()
+      .setThumbnail(embedThumbnail);
+    interaction.reply({ embeds: [ embed ] })
+      .catch(console.error);
+  } else {
+    interaction.reply({
+      content: 'Please specify the poll channel with `/channel channel: #polls` first',
+      ephemeral: true
+    })
+      .catch(console.error);
   }
-
-  const author = interaction.options.getUser('author')!;
-  const joke = interaction.options.getString('joke')!;
-
-  guilds.get(interaction.guildId!)!.jokes.push({
-    author: author.id,
-    joke: joke
-  });
-
-  interaction.reply(`Joke submitted:\n\n${author}: "**${joke}**"`)
-    .catch(console.error);
 }
 
 function channel(interaction: CommandInteraction) {
@@ -92,7 +104,7 @@ function createPoll() {
   const embed = new MessageEmbed()
     .setTitle('Vote for the Joke of the Week')
     .setDescription('React with the emoji of the joke you think was the funniest')
-    .setColor('#boob69')
+    .setColor(embedColor)
     .setTimestamp()
-    .setThumbnail('https://cdn.discordapp.com/avatars/933319312402436206/b34986c77251abe67cf4a6909f17acc6.webp');
+    .setThumbnail(embedThumbnail);
 }
