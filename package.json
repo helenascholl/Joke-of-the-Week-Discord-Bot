@@ -1,5 +1,5 @@
 {
-  "name": "your-bot",
+  "name": "joke-of-the-week-discord-bot",
   "version": "1.0.0",
   "description": "A Discord bot.",
   "main": "src/index.ts",
@@ -12,19 +12,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/schollsebastian/Discord-Bot-Template.git"
+    "url": "git+https://github.com/schollsebastian/Joke-of-the-Week-Discord-Bot.git"
   },
   "keywords": [
     "discord",
     "discord.js",
     "discord-bot"
   ],
-  "author": "Your Name <email@example.com> (http://example.com)",
+  "author": "Sebastian Scholl <scholl.sebastian@gmx.at> (https://schollsebastian.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/schollsebastian/Discord-Bot-Template/issues"
+    "url": "https://github.com/schollsebastian/Joke-of-the-Week-Discord-Bot/issues"
   },
-  "homepage": "https://github.com/schollsebastian/Discord-Bot-Template#readme",
+  "homepage": "https://github.com/schollsebastian/Joke-of-the-Week-Discord-Bot#readme",
   "dependencies": {
     "@discordjs/builders": "^0.11.0",
     "@discordjs/rest": "^0.2.0-canary.0",

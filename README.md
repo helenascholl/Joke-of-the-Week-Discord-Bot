@@ -1,6 +1,6 @@
-# Your Bot
+# Joke of the Week Discord Bot
 
-A Discord bot.
+Vote for the Joke of the Week.
 
 ## Invite the bot
 
