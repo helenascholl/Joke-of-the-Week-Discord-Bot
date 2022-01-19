@@ -1,4 +1,4 @@
-import { Client, CommandInteraction, GuildBasedChannel, Intents, MessageEmbed } from 'discord.js';
+import { Client, CommandInteraction, GuildTextBasedChannel, Intents, MessageEmbed } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import dotenv from 'dotenv';
@@ -107,4 +107,9 @@ function createPoll() {
     .setColor(embedColor)
     .setTimestamp()
     .setThumbnail(embedThumbnail);
+
+  guilds.forEach(guild => {
+    const channel = client.channels.cache.get(guild.channel) as GuildTextBasedChannel;
+    channel.send({ embeds: [ embed ] });
+  });
 }
