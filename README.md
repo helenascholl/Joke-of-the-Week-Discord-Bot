@@ -4,7 +4,7 @@ Vote for the Joke of the Week.
 
 ## Invite the bot
 
-https://discordapp.com/oauth2/authorize?&client_id=[CLIENT ID]&scope=bot&permissions=[PERMISSIONS]
+https://discordapp.com/oauth2/authorize?&client_id=933319312402436206&scope=bot&permissions=[PERMISSIONS]
 
 ## For Developers
 
@@ -17,7 +17,7 @@ while an instance is running, you should create a second bot and use it's token 
 
 ### Get your invite link
 
-To create an invite link for your bot, replace `[CLIENT ID]` in the link above with the Client ID of your Discord
+To create an invite link for your bot, replace `933319312402436206` in the link above with the Client ID of your Discord
 Application and `[PERMISSIONS]` with the generated integer.
 
 ### Start the Bot
