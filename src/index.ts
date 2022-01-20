@@ -9,6 +9,7 @@ import Guild from './guild.interface';
 dotenv.config();
 
 const cronString = '0 15 * * 5';
+const emojis = '1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣9️⃣0️⃣❤️💚💙';
 const embedColor = '#b00b69';
 const embedThumbnail = 'https://cdn.discordapp.com/avatars/933319312402436206/b34986c77251abe67cf4a6909f17acc6.webp';
 const commands = [
@@ -57,22 +58,27 @@ client.login(token)
 
 function submit(interaction: CommandInteraction) {
   if (guilds.has(interaction.guildId!)) {
-    const author = interaction.options.getUser('author')!;
-    const joke = interaction.options.getString('joke')!;
+    if (guilds.get(interaction.guildId!)!.jokes.length <= emojis.length) {
+      const author = interaction.options.getUser('author')!;
+      const joke = interaction.options.getString('joke')!;
 
-    guilds.get(interaction.guildId!)!.jokes.push({
-      author: author.id,
-      joke: joke
-    });
+      guilds.get(interaction.guildId!)!.jokes.push({
+        author: author.id,
+        joke: joke
+      });
 
-    const embed = new MessageEmbed()
-      .setTitle('🥳 Joke submitted')
-      .addField(author.username, joke)
-      .setColor(embedColor)
-      .setTimestamp()
-      .setThumbnail(embedThumbnail);
-    interaction.reply({ embeds: [ embed ] })
-      .catch(console.error);
+      const embed = new MessageEmbed()
+        .setTitle('🥳 Joke submitted')
+        .addField(author.username, joke)
+        .setColor(embedColor)
+        .setTimestamp()
+        .setThumbnail(embedThumbnail);
+      interaction.reply({ embeds: [ embed ] })
+        .catch(console.error);
+    } else {
+      interaction.reply({ content: 'Maximum number of jokes reached this week', ephemeral: true })
+        .catch(console.error);
+    }
   } else {
     interaction.reply({
       content: 'Please specify the poll channel with `/channel channel: #polls` first',
