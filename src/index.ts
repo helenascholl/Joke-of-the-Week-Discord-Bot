@@ -103,13 +103,17 @@ function channel(interaction: CommandInteraction) {
 function createPoll() {
   const embed = new MessageEmbed()
     .setTitle('Vote for the Joke of the Week')
-    .setDescription('React with the emoji of the joke you think was the funniest')
+    .setDescription('React with the emoji of the joke you think was the funniest.')
     .setColor(embedColor)
     .setTimestamp()
     .setThumbnail(embedThumbnail);
 
   guilds.forEach(guild => {
     const channel = client.channels.cache.get(guild.channel) as GuildTextBasedChannel;
+
+    guild.jokes.forEach(j => embed.addField(client.users.cache.get(j.author)!.username, j.joke));
+    guild.jokes = [];
+
     channel.send({ embeds: [ embed ] });
   });
 }
