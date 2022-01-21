@@ -4,7 +4,7 @@ Vote for the Joke of the Week.
 
 ## Invite the bot
 
-https://discordapp.com/oauth2/authorize?&client_id=933319312402436206&scope=bot&permissions=[PERMISSIONS]
+https://discord.com/api/oauth2/authorize?client_id=933319312402436206&permissions=68672&scope=bot%20applications.commands
 
 ## For Developers
 
