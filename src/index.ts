@@ -5,11 +5,12 @@ import dotenv from 'dotenv';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import schedule from 'node-schedule';
 import Guild from './guild.interface';
+import Joke from './joke.interface';
 
 dotenv.config();
 
 const cronString = '0 15 * * 5';
-const emojis = '1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣9️⃣0️⃣❤️💚💙';
+const emojis = [ '😆', '😍', '😎', '😡', '😑', '🤢', '🥵', '🥶', '💩', '🤡', '🤩', '😈', '🤠', '🥳' ];
 const embedColor = '#b00b69';
 const embedThumbnail = 'https://cdn.discordapp.com/avatars/933319312402436206/b34986c77251abe67cf4a6909f17acc6.webp';
 const commands = [
@@ -29,6 +30,7 @@ const token = process.env['NODE_ENV'] === 'development' ?
 const rest = new REST({ version: '9' }).setToken(token);
 const client = new Client({ intents: [ Intents.FLAGS.GUILDS ] });
 const guilds: Map<string, Guild> = new Map<string, Guild>();
+const votes: Map<string, Map<string, Joke>> = new Map<string, Map<string, Joke>>();
 
 schedule.scheduleJob(cronString, createPoll);
 
@@ -58,7 +60,7 @@ client.login(token)
 
 function submit(interaction: CommandInteraction) {
   if (guilds.has(interaction.guildId!)) {
-    if (guilds.get(interaction.guildId!)!.jokes.length <= emojis.length) {
+    if (guilds.get(interaction.guildId!)!.jokes.length < emojis.length) {
       const author = interaction.options.getUser('author')!;
       const joke = interaction.options.getString('joke')!;
 
@@ -117,9 +119,23 @@ function createPoll() {
   guilds.forEach(guild => {
     const channel = client.channels.cache.get(guild.channel) as GuildTextBasedChannel;
 
-    guild.jokes.forEach(j => embed.addField(client.users.cache.get(j.author)!.username, j.joke));
+    votes.set(guild.id, new Map<string, Joke>());
+
+    guild.jokes.forEach((joke, i) => {
+      embed.addField(`${emojis[i]} ${client.users.cache.get(joke.author)!.username}`, joke.joke);
+      votes.get(guild.id)!.set(emojis[i], joke);
+    });
     guild.jokes = [];
 
-    channel.send({ embeds: [ embed ] });
+    channel.send({ embeds: [ embed ] })
+      .then(message => {
+        const emojis = Array.from(votes.get(guild.id)!.keys());
+
+        for (let i = 0; i <= emojis.length; i++) {
+          message.react(emojis[i])
+            .catch(console.error);
+        }
+      })
+      .catch(console.error);
   });
 }
