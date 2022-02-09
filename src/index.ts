@@ -40,7 +40,6 @@ const token = process.env['NODE_ENV'] === 'development' ?
 const rest = new REST({ version: '9' }).setToken(token);
 const client = new Client({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] });
 const guilds: Map<string, Guild> = new Map<string, Guild>();
-const votes: Map<string, Map<string, Joke>> = new Map<string, Map<string, Joke>>();
 
 schedule.scheduleJob(cronString, createPoll);
 
@@ -132,19 +131,34 @@ function createPoll(): void {
   guilds.forEach(guild => {
     const channel = client.channels.cache.get(guild.channel) as GuildTextBasedChannel;
 
-    votes.set(guild.id, new Map<string, Joke>());
+    const options: Map<string, Joke> = new Map<string, Joke>();
 
     guild.jokes.forEach((joke, i) => {
-      embed.addField(`${emojis[i]} ${client.users.cache.get(joke.author)!.username}`, joke.joke);
-      votes.get(guild.id)!.set(emojis[i], joke);
+      embed.addField(`${emojis[i]} ${joke.author.username}`, joke.joke);
+      options.set(emojis[i], joke);
     });
     guild.jokes = [];
 
     channel.send({ embeds: [ embed ] })
       .then(async message => {
-        const emojis = Array.from(votes.get(guild.id)!.keys());
+        const emojis = Array.from(options.keys());
 
-        awaitReactions(message);
+        awaitReactions(message, emojis)
+          .then(result => {
+            const embed = new MessageEmbed()
+              .setTitle('🎉 The Joke of the Week!')
+              .setColor(embedColor)
+              .setTimestamp()
+              .setThumbnail(embedThumbnail);
+
+            result.forEach(r => {
+              embed.addField(`${r.votes} votes`,
+                `${r.emoji} ${options.get(r.emoji)!.joke} - ${options.get(r.emoji)!.author.username}`);
+            });
+
+            message.channel.send({ embeds: [ embed ] })
+              .catch(console.error);
+          });
 
         for (const emoji of emojis) {
           await message.react(emoji);
@@ -154,21 +168,33 @@ function createPoll(): void {
   });
 }
 
-function awaitReactions(message: Message): void {
-  message.awaitReactions({ filter: r => emojis.includes(r.emoji.name!), time: pollTime, errors: [ 'time' ] })
-    .catch((collected: Collection<string, MessageReaction>) => {
-      const result = new Map<string, string[]>();
+function awaitReactions(message: Message, emojis: string[]): Promise<{ emoji: string; votes: number }[]> {
+  return new Promise(resolve => {
+    message.awaitReactions({ filter: r => emojis.includes(r.emoji.name!), time: 20000, errors: [ 'time' ] })
+      .catch((collected: Collection<string, MessageReaction>) => {
+        const users: string[] = [];
+        const result = new Map<string, number>();
 
-      collected.forEach(reaction => {
-        if (!result.has(reaction.emoji.name!)) {
-          result.set(reaction.emoji.name!, []);
-        }
-
-        reaction.users.cache.forEach(user => {
-          if (user.id !== client.user!.id && !Array.from(result.values()).flat().includes(user.id)) {
-            result.get(reaction.emoji.name!)!.push(user.id);
+        collected.forEach(reaction => {
+          if (!result.has(reaction.emoji.name!)) {
+            result.set(reaction.emoji.name!, 0);
           }
+
+          reaction.users.cache.forEach(user => {
+            if (user.id !== client.user!.id && !users.includes(user.id)) {
+              users.push(user.id);
+              result.set(reaction.emoji.name!, result.get(reaction.emoji.name!)! + 1);
+            }
+          });
         });
+
+        const sortedResult: { emoji: string; votes: number }[] = [];
+
+        result.forEach((votes, emoji) => {
+          sortedResult.push({ emoji, votes });
+        });
+
+        resolve(sortedResult.sort((a, b) => b.votes - a.votes));
       });
-    });
+  });
 }
