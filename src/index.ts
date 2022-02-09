@@ -128,12 +128,13 @@ function createPoll() {
     guild.jokes = [];
 
     channel.send({ embeds: [ embed ] })
-      .then(message => {
+      .then(async message => {
         const emojis = Array.from(votes.get(guild.id)!.keys());
 
-        for (let i = 0; i <= emojis.length; i++) {
-          message.react(emojis[i])
-            .catch(console.error);
+        awaitReactions(message);
+
+        for (const emoji of emojis) {
+          await message.react(emoji);
         }
       })
       .catch(console.error);
