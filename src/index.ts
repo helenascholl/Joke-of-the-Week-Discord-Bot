@@ -68,7 +68,7 @@ client.on('interactionCreate', interaction => {
 client.login(token)
   .catch(console.error);
 
-function submit(interaction: CommandInteraction) {
+function submit(interaction: CommandInteraction): void {
   if (guilds.has(interaction.guildId!)) {
     if (guilds.get(interaction.guildId!)!.jokes.length < emojis.length) {
       const author = interaction.options.getUser('author')!;
@@ -100,7 +100,7 @@ function submit(interaction: CommandInteraction) {
   }
 }
 
-function channel(interaction: CommandInteraction) {
+function channel(interaction: CommandInteraction): void {
   const channel = interaction.options.getChannel('channel')!;
 
   if (channel.type === 'GUILD_TEXT') {
@@ -118,7 +118,7 @@ function channel(interaction: CommandInteraction) {
   }
 }
 
-function createPoll() {
+function createPoll(): void {
   const embed = new MessageEmbed()
     .setTitle('Vote for the Joke of the Week')
     .setDescription('React with the emoji of the joke you think was the funniest.')
@@ -151,7 +151,7 @@ function createPoll() {
   });
 }
 
-function awaitReactions(message: Message) {
+function awaitReactions(message: Message): void {
   message.awaitReactions({ filter: r => emojis.includes(r.emoji.name!), time: pollTime, errors: [ 'time' ] })
     .catch((collected: Collection<string, MessageReaction>) => {
       const result = new Map<string, string[]>();
