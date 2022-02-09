@@ -13,7 +13,7 @@ import { Routes } from 'discord-api-types/v9';
 import dotenv from 'dotenv';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import schedule from 'node-schedule';
-import fs from 'fs';
+import fs from 'fs/promises';
 import Guild from './guild.interface';
 import Joke from './joke.interface';
 
@@ -24,6 +24,7 @@ const emojis = [ '😆', '😍', '😎', '😡', '😑', '🤢', '🥵', '🥶',
 const embedColor = '#b00b69';
 const embedThumbnail = 'https://cdn.discordapp.com/avatars/933319312402436206/b34986c77251abe67cf4a6909f17acc6.webp';
 const pollTime = 10 * 60 * 1000;
+const guildsFile = 'src/guilds.json';
 const commands = [
   new SlashCommandBuilder()
     .setName('submit')
@@ -215,9 +216,6 @@ function persistGuilds(): void {
     guildJson[key] = guilds.get(key)!;
   }
 
-  fs.writeFile('src/guilds.json', JSON.stringify(guildJson, null, 2), err => {
-    if (err) {
-      console.error(err);
-    }
-  });
+  fs.writeFile(guildsFile, JSON.stringify(guildJson, null, 2))
+    .catch(console.error);
 }
