@@ -41,17 +41,18 @@ const token = process.env['NODE_ENV'] === 'development' ?
   process.env['DISCORD_PROD_TOKEN']!;
 const rest = new REST({ version: '9' }).setToken(token);
 const client = new Client({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] });
-const guilds: Map<string, Guild> = new Map<string, Guild>();
+let guilds: Map<string, Guild> = new Map<string, Guild>();
 
 schedule.scheduleJob(cronString, createPoll);
 
-client.on('ready', client => {
+client.on('ready', async client => {
   console.log(`Logged in as ${client.user.tag}`);
-
   client.user.setActivity({  type: 'LISTENING', name: 'to /submit' });
 
   rest.put(Routes.applicationCommands(client.user.id), { body: commands })
     .catch(console.error);
+
+  guilds = await readPersistedGuilds();
 });
 
 client.on('interactionCreate', interaction => {
