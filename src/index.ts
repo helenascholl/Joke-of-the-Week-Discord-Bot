@@ -1,4 +1,13 @@
-import { Client, CommandInteraction, GuildTextBasedChannel, Intents, MessageEmbed } from 'discord.js';
+import {
+  Client,
+  Collection,
+  CommandInteraction,
+  GuildTextBasedChannel,
+  Intents,
+  Message,
+  MessageEmbed,
+  MessageReaction
+} from 'discord.js';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import dotenv from 'dotenv';
