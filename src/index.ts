@@ -75,7 +75,10 @@ function submit(interaction: CommandInteraction): void {
       const joke = interaction.options.getString('joke')!;
 
       guilds.get(interaction.guildId!)!.jokes.push({
-        author: author.id,
+        author: {
+          id: author.id,
+          username: author.username
+        },
         joke: joke
       });
 
