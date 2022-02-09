@@ -170,7 +170,7 @@ function createPoll(): void {
 
 function awaitReactions(message: Message, emojis: string[]): Promise<{ emoji: string; votes: number }[]> {
   return new Promise(resolve => {
-    message.awaitReactions({ filter: r => emojis.includes(r.emoji.name!), time: 20000, errors: [ 'time' ] })
+    message.awaitReactions({ filter: r => emojis.includes(r.emoji.name!), time: pollTime, errors: [ 'time' ] })
       .catch((collected: Collection<string, MessageReaction>) => {
         const users: string[] = [];
         const result = new Map<string, number>();
