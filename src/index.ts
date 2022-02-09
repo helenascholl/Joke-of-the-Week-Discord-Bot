@@ -209,6 +209,22 @@ function awaitReactions(message: Message, emojis: string[]): Promise<{ emoji: st
   });
 }
 
+async function readPersistedGuilds(): Promise<Map<string, Guild>> {
+  const guilds = new Map<string, Guild>();
+
+  try {
+    const guildJson = JSON.parse(await fs.readFile('src/guilds.json', 'utf-8')) as { [ key: string ]: Guild };
+
+    for (const key in guildJson) {
+      guilds.set(key, guildJson[key]);
+    }
+  } catch {
+    console.log('No persisted guilds found');
+  }
+
+  return guilds;
+}
+
 function persistGuilds(): void {
   const guildJson: { [ key: string ]: Guild } = {};
 
