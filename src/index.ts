@@ -13,6 +13,7 @@ import { Routes } from 'discord-api-types/v9';
 import dotenv from 'dotenv';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import schedule from 'node-schedule';
+import fs from 'fs';
 import Guild from './guild.interface';
 import Joke from './joke.interface';
 
@@ -83,6 +84,8 @@ function submit(interaction: CommandInteraction): void {
         joke: joke
       });
 
+      persistGuilds();
+
       const embed = new MessageEmbed()
         .setTitle('🥳 Joke submitted')
         .addField(author.username, joke)
@@ -113,6 +116,8 @@ function channel(interaction: CommandInteraction): void {
     } else {
       guilds.get(interaction.guildId!)!.channel = channel.id;
     }
+
+    persistGuilds();
 
     interaction.reply(`Polls will now be posted in ${channel}`)
       .catch(console.error);
@@ -168,6 +173,8 @@ function createPoll(): void {
       })
       .catch(console.error);
   });
+
+  persistGuilds();
 }
 
 function awaitReactions(message: Message, emojis: string[]): Promise<{ emoji: string; votes: number }[]> {
@@ -198,5 +205,19 @@ function awaitReactions(message: Message, emojis: string[]): Promise<{ emoji: st
 
         resolve(sortedResult.sort((a, b) => b.votes - a.votes));
       });
+  });
+}
+
+function persistGuilds(): void {
+  const guildJson: { [ key: string ]: Guild } = {};
+
+  for (const key of guilds.keys()) {
+    guildJson[key] = guilds.get(key)!;
+  }
+
+  fs.writeFile('src/guilds.json', JSON.stringify(guildJson, null, 2), err => {
+    if (err) {
+      console.error(err);
+    }
   });
 }
