@@ -139,3 +139,22 @@ function createPoll() {
       .catch(console.error);
   });
 }
+
+function awaitReactions(message: Message) {
+  message.awaitReactions({ filter: r => emojis.includes(r.emoji.name!), time: pollTime, errors: [ 'time' ] })
+    .catch((collected: Collection<string, MessageReaction>) => {
+      const result = new Map<string, string[]>();
+
+      collected.forEach(reaction => {
+        if (!result.has(reaction.emoji.name!)) {
+          result.set(reaction.emoji.name!, []);
+        }
+
+        reaction.users.cache.forEach(user => {
+          if (user.id !== client.user!.id && !Array.from(result.values()).flat().includes(user.id)) {
+            result.get(reaction.emoji.name!)!.push(user.id);
+          }
+        });
+      });
+    });
+}
