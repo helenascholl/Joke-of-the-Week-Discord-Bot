@@ -6,6 +6,11 @@ Vote for the Joke of the Week.
 
 https://discord.com/api/oauth2/authorize?client_id=933319312402436206&permissions=68672&scope=bot%20applications.commands
 
+## Usage
+
+- `/channel`: Set the channel for polls
+- `/submit`: Submit a joke
+
 ## For Developers
 
 ### Create a Discord Application
