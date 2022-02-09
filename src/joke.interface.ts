@@ -1,5 +1,8 @@
 interface Joke {
-  author: string;
+  author: {
+    id: string;
+    username: string;
+  }
   joke: string;
 }
 
