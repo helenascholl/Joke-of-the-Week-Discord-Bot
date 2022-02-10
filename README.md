@@ -23,7 +23,7 @@ while an instance is running, you should create a second bot and use it's token 
 ### Get your invite link
 
 To create an invite link for your bot, replace `933319312402436206` in the link above with the Client ID of your Discord
-Application and `[PERMISSIONS]` with the generated integer.
+Application and `68672` with the generated integer.
 
 ### Start the Bot
 
@@ -42,5 +42,5 @@ docker-compose up -d
 
 ### CI/CD
 
-You can set up a GitHub Actions Workflow by copying the [ci.yml](https://github.com/schollsebastian/CI-Test-Bot/blob/main/.github/workflows/ci.yml)
+You can set up a GitHub Actions Workflow by copying the [deploy.yml](https://github.com/schollsebastian/CI-Example-Bot/blob/main/.github/workflows/deploy.yml)
 file into the `.github/workflows` directory of your repository.
