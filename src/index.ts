@@ -47,7 +47,7 @@ schedule.scheduleJob(cronString, createPoll);
 
 client.on('ready', async client => {
   console.log(`Logged in as ${client.user.tag}`);
-  client.user.setActivity({  type: 'LISTENING', name: 'to /submit' });
+  client.user.setActivity({  type: 'LISTENING', name: '/submit' });
 
   rest.put(Routes.applicationCommands(client.user.id), { body: commands })
     .catch(console.error);
