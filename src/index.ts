@@ -19,7 +19,7 @@ import Joke from './joke.interface';
 
 dotenv.config();
 
-const cronString = '0 15 * * 5';
+const cronString = '0 18 * * 7';
 const emojis = [ '😆', '😍', '😎', '😡', '😑', '🤢', '🥵', '🥶', '💩', '🤡', '🤩', '😈', '🤠', '🥳' ];
 const embedColor = '#b00b69';
 const embedThumbnail = 'https://cdn.discordapp.com/avatars/933319312402436206/b34986c77251abe67cf4a6909f17acc6.webp';
