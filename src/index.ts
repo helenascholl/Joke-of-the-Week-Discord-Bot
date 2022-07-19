@@ -142,38 +142,40 @@ function createPoll(): void {
 
     const options: Map<string, Joke> = new Map<string, Joke>();
 
-    guild.jokes.forEach((joke, i) => {
-      embed.addField(`${emojis[i]} ${joke.author.username}`, joke.joke);
-      options.set(emojis[i], joke);
-    });
-    guild.jokes = [];
+    if (guild.jokes.length > 0) {
+      guild.jokes.forEach((joke, i) => {
+        embed.addField(`${emojis[i]} ${joke.author.username}`, joke.joke);
+        options.set(emojis[i], joke);
+      });
+      guild.jokes = [];
 
-    channel.send({ embeds: [ embed ] })
-      .then(async message => {
-        const emojis = Array.from(options.keys());
+      channel.send({ embeds: [ embed ] })
+        .then(async message => {
+          const emojis = Array.from(options.keys());
 
-        awaitReactions(message, emojis)
-          .then(result => {
-            const embed = new MessageEmbed()
-              .setTitle('🎉 The Joke of the Week!')
-              .setColor(embedColor)
-              .setTimestamp()
-              .setThumbnail(embedThumbnail);
+          awaitReactions(message, emojis)
+            .then(result => {
+              const embed = new MessageEmbed()
+                .setTitle('🎉 The Joke of the Week!')
+                .setColor(embedColor)
+                .setTimestamp()
+                .setThumbnail(embedThumbnail);
 
-            result.forEach(r => {
-              embed.addField(`${r.votes} votes`,
-                `${r.emoji} ${options.get(r.emoji)!.joke} - ${options.get(r.emoji)!.author.username}`);
+              result.forEach(r => {
+                embed.addField(`${r.votes} votes`,
+                  `${r.emoji} ${options.get(r.emoji)!.joke} - ${options.get(r.emoji)!.author.username}`);
+              });
+
+              message.channel.send({ embeds: [ embed ] })
+                .catch(console.error);
             });
 
-            message.channel.send({ embeds: [ embed ] })
-              .catch(console.error);
-          });
-
-        for (const emoji of emojis) {
-          await message.react(emoji);
-        }
-      })
-      .catch(console.error);
+          for (const emoji of emojis) {
+            await message.react(emoji);
+          }
+        })
+        .catch(console.error);
+    }
   });
 
   persistGuilds();
