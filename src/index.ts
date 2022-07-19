@@ -130,14 +130,14 @@ function channel(interaction: CommandInteraction): void {
 }
 
 function createPoll(): void {
-  const embed = new MessageEmbed()
-    .setTitle('Vote for the Joke of the Week')
-    .setDescription('React with the emoji of the joke you think was the funniest.')
-    .setColor(embedColor)
-    .setTimestamp()
-    .setThumbnail(embedThumbnail);
-
   guilds.forEach(guild => {
+    const embed = new MessageEmbed()
+      .setTitle('Vote for the Joke of the Week')
+      .setDescription('React with the emoji of the joke you think was the funniest.')
+      .setColor(embedColor)
+      .setTimestamp()
+      .setThumbnail(embedThumbnail);
+
     const channel = client.channels.cache.get(guild.channel) as GuildTextBasedChannel;
 
     const options: Map<string, Joke> = new Map<string, Joke>();
